@@ -1,7 +1,7 @@
 {
   outputs = {}:{
-    nixosModules = (x: x//{default=x.flake-command-not-found;}) {
-      flake-command-not-found = ./module.nix;
+    nixosModules = (x: x//{default=x.flake-programdb;}) {
+      flake-programdb = ./module.nix;
     };
   };
 }
