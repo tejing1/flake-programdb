@@ -11,7 +11,7 @@ Import `nixosModules.flake-programdb` from this flake into your nixos configurat
 ```nix
 flake-programdb.enable = true;
 
-# Only necessary on unstable. The default will work if following nixos-XX.YY.
+# Unnecessary if following nixos-XX.YY.
 flake-programdb.channel = "nixos-unstable";
 ```
 
@@ -29,7 +29,7 @@ Full example:
         {
           flake-programdb.enable = true;
 
-          # Only necessary on unstable. The default will work if following nixos-XX.YY.
+          # Unnecessary if following nixos-XX.YY.
           flake-programdb.channel = "nixos-unstable";
         }
       ];
@@ -51,7 +51,7 @@ Defaults to `"/var/cache/programdb"`.
 ### flake-programdb.channel
 Name of the channel whose history should be searched for the right revision of nixpkgs.
 Defaults to `"nixos-" + config.system.nixos.release`.
-Must be set when following `nixos-unstable`.
+Must be set when following anything other than `nixos-XX.YY`.
 
 ### flake-programdb.rev
 The git revision of nixpkgs to search for in the history of the channel.
