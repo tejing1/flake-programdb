@@ -30,6 +30,23 @@ let
   } ''
     set -e -o pipefail
 
+    aws_depaginate() {
+      # Create tmpdir
+      unset tmpdir
+      cleanup() {
+        [ -d "${tmpdir:-}" ] && rm -rf "$tmpdir"
+      }
+      trap cleanup EXIT
+      tmpdir="$(mktemp -td mkvm-XXXXX)"
+
+      curl -sSL "$1" | tee "$tmpdir/result"
+      next="$(hred 'nextmarker @.textContent' -cr <"$tmpdir/result")"
+      while [ -n "$next" ]; do
+        curl -sSL "$1&marker=$next" | tee "$tmpdir/result"
+        next="$(hred 'nextmarker @.textContent' -cr <"$tmpdir/result")"
+      done
+    }
+
     dbdir="$1"
     channel="$2"
     rev="$3"
@@ -47,7 +64,7 @@ let
 
     # Parse the list of channel releases for our channel and find the one with our nixpkgs rev
     aws_url="https://nix-releases.s3.amazonaws.com/?delimiter=/&prefix=$channel_prefix/"
-    correct_release="$(curl -sSL "$aws_url" | hred ${escapeShellArg hredParse} | jq -rf ${jqSrc} --arg rev "$rev")"
+    correct_release="$(aws_depaginate "$aws_url" | hred ${escapeShellArg hredParse} | jq -rf ${jqSrc} --arg rev "$rev")"
 
     # Download nixexprs.tar.xz and extract programs.sqlite in stream
     nixexprs_url="https://releases.nixos.org/$correct_release/nixexprs.tar.xz"
