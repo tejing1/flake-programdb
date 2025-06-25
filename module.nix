@@ -33,9 +33,9 @@ let
 
     aws_depaginate() {
       exec {fd}>&1
-      next="$(curl -sSL "$1" | tee /proc/self/fd/$fd | hred ${escapeShellArg hredParseNext} -cr)"
+      next="$(curl -fsSL "$1" | tee /proc/self/fd/$fd | hred ${escapeShellArg hredParseNext} -cr)"
       while [ -n "$next" ]; do
-        next="$(curl -sSL "$1&marker=$next" | tee /proc/self/fd/$fd | hred ${escapeShellArg hredParseNext} -cr)"
+        next="$(curl -fsSL "$1&marker=$next" | tee /proc/self/fd/$fd | hred ${escapeShellArg hredParseNext} -cr)"
       done
     }
 
@@ -50,7 +50,7 @@ let
     rm -f "$dbdir/programs.rev"
 
     # Get the channel prefix used by the release infra
-    redirect_url="$(curl -sSw '%{redirect_url}' "https://channels.nixos.org/$channel")"
+    redirect_url="$(curl -fsSw '%{redirect_url}' "https://channels.nixos.org/$channel")"
     current_release="''${redirect_url#https://releases.nixos.org/}"
     channel_prefix="''${current_release%/*}"
 
@@ -60,7 +60,7 @@ let
 
     # Download nixexprs.tar.xz and extract programs.sqlite in stream
     nixexprs_url="https://releases.nixos.org/$correct_release/nixexprs.tar.xz"
-    curl -sSL "$nixexprs_url" | xz -d | tar -xO --wildcards '*/programs.sqlite' > "$dbdir/programs.sqlite.part"
+    curl -fsSL "$nixexprs_url" | xz -d | tar -xO --wildcards '*/programs.sqlite' > "$dbdir/programs.sqlite.part"
 
     # Check that what we downloaded at least looks like a valid sqlite3 database
     test_result="$(sqlite3 -readonly "$dbdir/programs.sqlite.part" 'PRAGMA integrity_check')"
