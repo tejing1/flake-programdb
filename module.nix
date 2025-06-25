@@ -35,7 +35,7 @@ let
       exec {fd}>&1
       next="$(curl -sSL "$1" | tee /proc/self/fd/$fd | hred ${escapeShellArg hredParseNext} -cr)"
       while [ -n "$next" ]; do
-        next="$(curl -sSL "$1&marker=$next" | tee /proc/self/fd/$fd | hred 'nextmarker @.textContent' -cr)"
+        next="$(curl -sSL "$1&marker=$next" | tee /proc/self/fd/$fd | hred ${escapeShellArg hredParseNext} -cr)"
       done
     }
 
