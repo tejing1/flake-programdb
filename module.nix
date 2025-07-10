@@ -27,7 +27,7 @@ let
     inputs = attrValues {
       inherit (pkgs) coreutils curl hred jq xz gnutar sqlite;
     };
-    execer = [ "cannot:${pkgs.hred}/bin/hred" ];
+    execer = [ "cannot:${pkgs.hred}/bin/hred" ]; # Remove this line once 25.11 has been out for a while. See https://github.com/NixOS/nixpkgs/pull/419679
   } ''
     set -e -o pipefail
 
